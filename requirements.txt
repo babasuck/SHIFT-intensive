@@ -10,4 +10,3 @@ opencv-python==4.9.0.80
 protobuf==4.25
 torchmetrics==1.5.2
 split-folders==0.5.1
-albumentations==1.4.21
