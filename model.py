@@ -7,14 +7,10 @@ import numpy as np
 import torch
 import torchvision
 
+TEMPERATURE = 8251.5947265625
 
 def get_mobilenet_model(num_classes: int = 29):
-    model = torchvision.models.mobilenet_v3_small()
-    model.classifier[-1] = torch.nn.Linear(model.classifier[-1].in_features, num_classes)
-    return model
-
-def get_efficientnet_model(num_classes: int = 29):
-    model = torchvision.models.efficientnet_b0(weights=torchvision.models.EfficientNet_B0_Weights.DEFAULT)
+    model = torchvision.models.efficientnet_b0()
     model.classifier[-1] = torch.nn.Linear(model.classifier[-1].in_features, num_classes)
     return model
 
@@ -29,7 +25,7 @@ class ImageClassifier:
 
         # Load the model
         checkpoint = torch.load(model_fname)
-        self.model_ = get_efficientnet_model()
+        self.model_ = get_mobilenet_model()
         self.model_.load_state_dict(checkpoint)
 
         # Set up device and model
@@ -47,20 +43,18 @@ class ImageClassifier:
         image_tensor = torch.unsqueeze(image_tensor, 0)  # Add batch dimension
         with torch.no_grad():
             outputs = self.model_(image_tensor)
-        return outputs
+        return outputs / TEMPERATURE
 
     def predict_batch(self, images: List[np.ndarray]) -> torch.Tensor:
         """Predict the class of a batch of images."""
         image_tensors = torch.stack([self._preprocess(image) for image in images])
         with torch.no_grad():
             outputs = self.model_(image_tensors)
-        return outputs
+        return outputs / TEMPERATURE
 
-
-# Example usage:
 if __name__ == '__main__':
     classifier = ImageClassifier()
-    image = cv2.imread('/data/test/A/A1.jpg')
+    image = cv2.imread('./data/val/A/A1.jpg')
     prediction = classifier.predict(image)  # For a single image
-    batch_predictions = classifier.predict_batch([image])  # For a batch of images
-    print(prediction, batch_predictions)
+    #batch_predictions = classifier.predict_batch([image])  # For a batch of images
+    print(prediction)

@@ -167,3 +167,6 @@ data/train/
 data/val/
 run/
 tensorboard/
+*.pth
+ckpt
+*.csv
