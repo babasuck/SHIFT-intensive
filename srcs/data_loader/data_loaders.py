@@ -36,7 +36,7 @@ class SignDataset(Dataset):
 def get_sign_dataloader(
         path_train, path_val, batch_size, shuffle=True, num_workers=1,
     ):
-    transform = A.Compose([
+    train_transform = A.Compose([
         A.ShiftScaleRotate(shift_limit=(-.1, .1),
                            scale_limit=(-.2, .2),
                            rotate_limit=0,
@@ -50,9 +50,11 @@ def get_sign_dataloader(
         ], p=0.3),                 
         A.GaussNoise(p=0.2),
         A.Normalize()])
+    
+    val_transform = A.Normalize()
 
-    train_dataset = SignDataset(paths=[*Path(path_train).rglob('*.jpg')], transform=transform)
-    val_dataset = SignDataset(paths=[*Path(path_val).rglob('*.jpg')], transform=transform)
+    train_dataset = SignDataset(paths=[*Path(path_train).rglob('*.jpg')], transform=train_transform)
+    val_dataset = SignDataset(paths=[*Path(path_val).rglob('*.jpg')], transform=val_transform)
 
     loader_args = {
         'batch_size': batch_size,
