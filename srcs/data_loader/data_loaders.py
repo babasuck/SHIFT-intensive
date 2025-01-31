@@ -40,14 +40,14 @@ def get_sign_dataloader(
         A.ShiftScaleRotate(shift_limit=(-.1, .1),
                            scale_limit=(-.2, .2),
                            rotate_limit=0,
-                           p=0.2),
+                           p=1),
         A.OneOf([
             A.RandomToneCurve(scale=0.1, 
                               p=0.2),
             A.RandomBrightnessContrast(brightness_limit=(-0.2, 0.2), 
                                        contrast_limit=(-0.2, 0.2),
-                                       p=0.2),
-        ], p=0.2),                 
+                                       p=0.8),
+        ], p=0.3),                 
         A.GaussNoise(p=0.2),
         A.Normalize()])
     
